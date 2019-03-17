@@ -50,9 +50,8 @@ def get_state_probabilities(df):
     states = list(product(['treatment','control'],[0,1], [0,1]))
 
     p_states = {f"{assignment}/{'treated' if took == 1 else 'untreated'}/{'good' if outcome ==1 else 'bad'}" : 
-                ((df.assignment == assignment) 
-                   & (df.took_treatment == took) 
-                   & (df.good_outcome == outcome)).mean()
+                ( (df[df.assignment == assignment].took_treatment == took)
+                   & (df[df.assignment == assignment].good_outcome == outcome)  ).mean()
                 for assignment, took, outcome in states
                 }
     
@@ -113,17 +112,38 @@ def solve(problem, q, p_states):
 
 def symbolic_solve(p):
     
-    min_ate = max(p['treatment/treated/good'] + p['control/untreated/bad'] - 1,
-                 p['control/treated/good'] + p['treatment/untreated/bad'] - 1,
-                 p['control/treated/good'] - p['treatment/treated/good'] \ 
-                  - p['treatment/treated/bad'] - p['control/untreated/good'] - p['control/treated/bad'],
-                 p['treatment/treated/good'] - p['control/treated/good'] \ 
-                  - p['control/treated/bad'] - p['treatment/untreated/good'] - p['treatment/treated/bad'],
-                 -p['treatment/untreated/good'] - p['treatment/treated/bad'],
-                 -p['control/untreated/good'] - p['control/treated/bad'],
-                 p['treatment/untreated/bad'] - p['treatment/untreated/good'] \
-                  - p['treatment/treated/bad'] - p['control/untreated/good'] - p['control/untreated/bad'],
-                 p['control/untreated/bad'], p['control/untreated/good'])
+    p111 = p['treatment/treated/good']
+    p101 = p['treatment/treated/bad']
+    p001 = p['treatment/untreated/bad']
+    p011 = p['treatment/untreated/good']
+    
+    p110 = p['control/treated/good']
+    p100 = p['control/treated/bad']
+    p000 = p['control/untreated/bad']
+    p010 = p['control/untreated/good'] 
+
+    
+    
+    q_min = max(p111 + p000 - 1,
+                p110 + p001 - 1,
+                p110 - p111 - p101 - p010 - p100,
+                p111 - p110 - p100 - p011 - p101,
+                -p011 - p101,
+                -p010 - p100,
+                p001 - p011 - p101 - p010 - p000,
+                p000 - p010 - p100 - p011 - p001
+               ) 
+    
+    q_max = min(1 - p011 - p100,
+               1 - p010 - p101,
+               -p010 + p011 + p001 + p110 + p000,
+               -p011 + p111 + p001 + p010 + p000,
+               p111 + p001,
+               p110 + p000,
+               -p101 + p111 + p001 + p110 + p100,
+               -p100 + p110 + p000 + p111 + p101)
+    
+    return q_min, q_max
 
 true_ate = lambda df: (df.response_type == 'helped').mean() - (df.response_type == 'hurt').mean()
 
