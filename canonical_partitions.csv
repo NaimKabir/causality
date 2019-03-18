@@ -1,0 +1,5 @@
+,always_taker,complier,defier,never_taker
+always_better,always_taker and always_better,complier and always_better,defier and always_better,never_taker and always_better
+helped,always_taker and helped,complier and helped,defier and helped,never_taker and helped
+hurt,always_taker and hurt,complier and hurt,defier and hurt,never_taker and hurt
+never_better,always_taker and never_better,complier and never_better,defier and never_better,never_taker and never_better
