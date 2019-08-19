@@ -1,9 +1,9 @@
 ,probabilities
-treatment/untreated/bad,0.278
-treatment/untreated/good,0.174
-treatment/treated/bad,0.344
-treatment/treated/good,0.204
-control/untreated/bad,0.336
-control/untreated/good,0.182
-control/treated/bad,0.316
-control/treated/good,0.166
+treatment/untreated/bad,0.332
+treatment/untreated/good,0.15
+treatment/treated/bad,0.216
+treatment/treated/good,0.302
+control/untreated/bad,0.374
+control/untreated/good,0.154
+control/treated/bad,0.258
+control/treated/good,0.214
